@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { inter, jetbrainsMono } from "./fonts";
+import { site } from "@/content/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Стапель — фронтенд под ключ на React и Next.js",
-  description:
-    "Собираю то, что потом можно поддерживать. Лендинги, SPA и дашборды, интеграции и доработка чужого кода.",
+  title: `${site.name} — ${site.tagline}`,
+  description: site.description,
 };
 
 export default function RootLayout({
@@ -14,11 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${inter.variable} ${jetbrainsMono.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
-        <div aria-hidden className="blueprint-grid" />
-        {children}
-      </body>
+    <html lang="ru" className="h-full">
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

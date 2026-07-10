@@ -1,70 +1,46 @@
 @import "tailwindcss";
 
 @theme {
-  /* Палитра. Один яркий цвет на всю страницу — lime.
-     Контраст: light/void 16.1:1, dim/void 7.4:1, lime/void 14.9:1. */
-  --color-void: #0b0c0e;
-  --color-plate: #121417;
-  --color-rule: #23262b;
-  --color-light: #e6e8eb;
-  --color-dim: #8a9099;
-  --color-lime: #c5f04a;
-  --color-danger: #ff6b5e;
+  /* Mini App живёт внутри чужого интерфейса: цвета берём у клиента Telegram.
+     Значения справа — фолбэк для обычного браузера и админки. */
+  --color-bg: var(--tg-theme-bg-color, #ffffff);
+  --color-surface: var(--tg-theme-secondary-bg-color, #f2f3f5);
+  --color-text: var(--tg-theme-text-color, #0f1115);
+  --color-muted: var(--tg-theme-hint-color, #6b7075);
+  --color-link: var(--tg-theme-link-color, #1d6fd4);
+  --color-button: var(--tg-theme-button-color, #1d6fd4);
+  --color-on-button: var(--tg-theme-button-text-color, #ffffff);
+  --color-line: var(--tg-theme-section-separator-color, #e3e5e8);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  /* Свои цвета. Единственные, не зависящие от темы клиента.
+     amber — акцент бренда, остальные несут смысл в статусах заявки. */
+  --color-amber: #ffb300;
+  --color-danger: #e5484d;
+  --color-ok: #2f9e63;
 
-  --text-hero: clamp(2.5rem, 6vw, 4.5rem);
-  --text-hero--line-height: 1.05;
-  --text-hero--letter-spacing: -0.02em;
-
-  --text-h2: clamp(1.5rem, 3vw, 2.25rem);
-  --text-h2--line-height: 1.15;
-  --text-h2--letter-spacing: -0.02em;
-
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.3;
-
-  --text-body: 1.0625rem;
-  --text-body--line-height: 1.65;
-
-  --text-mono: 0.75rem;
-  --text-mono--line-height: 1.4;
-  --text-mono--letter-spacing: 0.08em;
-
-  --radius-base: 6px;
-
-  --spacing-section: clamp(4rem, 10vw, 7.5rem);
-
-  /* Шаг координатной сетки-чертежа */
-  --grid-step: 32px;
+  --radius-base: 12px;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Якоря не заезжают под липкую шапку */
-    scroll-padding-top: 6rem;
   }
 
   body {
-    background-color: var(--color-void);
-    color: var(--color-light);
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: var(--text-body--line-height);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    /* Mini App не тянет веб-шрифт: 200 КБ ради шрифта, который пользователь
+       и так видит в мессенджере, не окупаются. */
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-lime);
+    outline: 2px solid var(--color-link);
     outline-offset: 2px;
-    border-radius: 2px;
-  }
-
-  ::selection {
-    background-color: var(--color-lime);
-    color: var(--color-void);
+    border-radius: 4px;
   }
 
   button:not(:disabled),
@@ -80,48 +56,8 @@
   }
 }
 
-@utility mono-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  line-height: var(--text-mono--line-height);
-  letter-spacing: var(--text-mono--letter-spacing);
-  text-transform: uppercase;
-}
-
-/* Координатная сетка: CSS-градиент, не изображение.
-   Линии рисуем цветом `light` при opacity 0.03 — на фоне `void` это даёт ровно
-   тон `rule`. Сам `rule` при такой прозрачности не отличим от фона. */
-@utility blueprint-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image:
-    repeating-linear-gradient(
-      to right,
-      var(--color-light) 0 1px,
-      transparent 1px var(--grid-step)
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      var(--color-light) 0 1px,
-      transparent 1px var(--grid-step)
-    );
-}
-
-/* Honeypot: прячем не через display:none — часть ботов пропускает такие поля */
-@utility visually-hidden-trap {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
 /* Анимации не отключаются целиком, а становятся мгновенными:
-   иначе ломается логика появления секций по whileInView. */
+   иначе ломается логика появления элементов. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
